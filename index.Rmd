@@ -1,0 +1,159 @@
+---
+title: "Bayesian meta-regression models for the estimation of population trends in health risk factors"
+subtitle: "<span style = 'font-style: normal;'>Annibale Cois </span><span style = 'font-size: 50%;'>MEng, MPH, PhD</span>"
+author: "<span style='font-size: 80%; font-style:normal;'>Division of Health Systems & Public Health, Department of Global Health, Stellenbosch University &amp; <br/> Division of Epidemiology & Biostatistics, School of Public Health, University of Cape Town</span>" 
+date: "<span style = 'color: #000000; position: relative; top: 180px; font-style:normal;'>01/12/2022 &bull; George &bull; Western Cape &bull; South Africa </span>" 
+output:  
+  xaringan::moon_reader:
+    css: ["default", "assets/sydney-fonts.css", "assets/sydney.css", "assets/stellenbosch.css"]
+    self_contained: false # if true, fonts will be stored locally
+    seal: true # show a title slide with YAML information
+    includes:
+      in_header: "assets/mathjax-equation-numbers.html"
+    nature:
+      beforeInit: ["assets/remark-zoom.js", "assets/cols_macro.js", "assets/macros.js"]
+      highlightStyle: github
+      highlightLines: true
+      ratio: '16:9' # alternatives '16:9' or '4:3' or others e.g. 13:9
+      countIncrementalSlides: true
+      navigation:
+        scroll: false # disable slide transitions by scrolling
+---
+
+class: hide_logo
+
+```{r setup, echo=FALSE}
+knitr::read_chunk('assets/init.R')
+```
+
+```{r, echo=FALSE, cache=FALSE, message=FALSE}
+<<init>>
+```
+
+## Outline `r top_icon("list")`
+.purple[
+- ### Quantifying trends and distribution of risk factors for health
+- ### Alcohol consumption as a case in point: mainstream estimation methods  
+]
+--
+.black[
+- ### Why Bayes? A principled approach to data synthesis
+- ### A Bayesian meta-regression model for alcohol consumption
+]
+--
+.black[
+- ### Results: a (brief) summary
+- ### Conclusion
+]
+
+???
+- Quantifying trends and distribution of risk factors for health
+- Alcohol consumption as a case in point: mainstream estimation methods  
+
+- Why Bayes? A principled approach to data synthesis
+- A Bayesian meta-regression model for alcohol consumption: overview, implementation, fitting, checking
+
+- Results: a (brief) summary
+- Conclusion
+
+
+---
+## Risk factors distributions and trends  `r top_icon("stethoscope")`
+
+
+---
+## Estimating alcohol consumption  `r top_icon("wine-bottle")`
+
+
+---
+## The WHO approach  `r top_icon("wine-bottle")`
+
+
+
+---
+## Why Bayes?  `r top_icon("circle")`
+
+
+---
+## A meta-regression model  `r top_icon("code")`
+
+
+
+---
+class: middle 
+## `r top_icon("divide")`
+
+ .font140[
+$$\require{color}\displaystyle
+\begin{align}
+&L = \color{#FF0000}{\prod pc_{s,g,a,k}\cdot ne_{s,g,a}} \cdot L^{'}_{s,g,a,k} \prod L^{''}_{s,g,a}\label{EQ:LIK}\\
+\nonumber\\
+&L^{'}_{s,g,a,k} = \left\{\begin{array}{l}
+    Gamma(uc_{s,g,a,k} \vert \alpha_{y,g,a},\beta_{y,g,a}/c_{s,g,a}) \qquad if \; uc_{\cdot} = lc_{\cdot}\\\\
+    \displaystyle \int_{x=lc_{s,g,a,k}}^{uc_{s,g,a,k}} Gamma(x \vert \alpha_{y,g,a},\beta_{y,g,a}/c_{s,g,a})dx \qquad if \; uc_{\cdot} > lc_{\cdot}    
+      \end{array}\right.\\
+\nonumber\\
+&L^{''}_{s,g,a} = \mathcal{N}(pp_{s,g,a} \vert p_{y,g,a},pse_{s,g,a})
+\end{align}$$
+]
+
+
+---
+## `r top_icon("divide")`
+
+
+---
+## `r top_icon("check")`
+
+
+
+---
+## `r top_icon("chart-line")`
+
+
+
+---
+## `r top_icon("stop")`
+
+
+---
+
+ $$\require{color}\displaystyle 
+\colorbox{#FFD1DC}{$Y = \beta_0 + \beta_1 X_1 + \ldots + \beta_n X_n$}$$
+
+---
+class: hide_logo
+## References  
+
+```{r, echo=FALSE, cache=FALSE, message=FALSE, results = 'asis'}
+PrintBibliography(bib)
+```
+
+
+---
+class: su-white hide_logo
+<br/><br/>
+
+.font80[
+<p style ="font-size:400%; margin-bottom: -10px; margin-left: -5px;">Thank You!</p>
+<div style = "margin-left:15px;">
+`r icons::icon_style(icons::fontawesome("envelope"),fill = "#561a34")` [acois@sun.ac.za](mailto:acois@sun.ac.za)
+
+ORCID: [0000-0002-7014-6510](https://orcid.org/0000-0002-7014-6510)
+
+<p>Web of Science: [ AAK-8603-2020](https://www.webofscience.com/wos/author/rid/AAK-8603-2020)
+]
+<img src = "assets/sulogo_4.png" width = "270" style = "margin-top: 5px; margin-left:15px;"></img> 
+</div>
+<br/>
+
+<div style = "text-align: right; position: fixed; right: 100px;">
+<img src = "images/github.png" width = "85"></img> <br/>
+.font70[
+This presentation is available from: <br/>
+<a href = "https://annibalecois,github.io/metaregression">https://annibaleaois.github.io/metaregression</a> <br/>
+and the generating code from: <br/>
+<a href = "https://github.com/annibalecois/metaregression">https://github.com/annibalecois/metaregression</a> <br/>
+]
+</div>
+
