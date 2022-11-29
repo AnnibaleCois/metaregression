@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Bayesian meta-regression models for the estimation of population trends in health risk factors</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Division of Health Systems &amp; Public Health, Department of Global Health, Stellenbosch University &amp;   Division of Epidemiology &amp; Biostatistics, School of Public Health, University of Cape Town" />
+    <script src="index_files/header-attrs-2.16/header-attrs.js"></script>
+    <link href="index_files/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="index_files/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
+    <script src="index_files/tile-view-0.2.6/tile-view.js"></script>
+    <script type="application/json" id="xaringanExtra-editable-docid">{"id":"fd8b82d54159421c9df1f2900611ef73","expires":14}</script>
+    <script src="index_files/himalaya-1.1.0/himalaya.js"></script>
+    <script src="index_files/js-cookie-3.0.0/js.cookie.js"></script>
+    <link href="index_files/editable-0.2.6/editable.css" rel="stylesheet" />
+    <script src="index_files/editable-0.2.6/editable.js"></script>
+    <script src="index_files/fabric-4.3.1/fabric.min.js"></script>
+    <link href="index_files/xaringanExtra-scribble-0.0.1/scribble.css" rel="stylesheet" />
+    <script src="index_files/xaringanExtra-scribble-0.0.1/scribble.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', function() { window.xeScribble = new Scribble({"pen_color":["#FF0000"],"pen_size":3,"eraser_size":30,"palette":[]}) })</script>
+    <script src="index_files/xaringanExtra-webcam-0.0.1/webcam.js"></script>
+    <script id="xaringanExtra-webcam-options" type="application/json">{"width":"200","height":"200","margin":"1em"}</script>
+    <link href="index_files/panelset-0.2.6/panelset.css" rel="stylesheet" />
+    <script src="index_files/panelset-0.2.6/panelset.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } },
+      });
+    </script>
+    <style>
+    .mjx-mrow a {
+      color: black;
+      pointer-events: none;
+      cursor: default;
+    }
+    </style>
+    <link rel="stylesheet" href="assets/sydney-fonts.css" type="text/css" />
+    <link rel="stylesheet" href="assets/sydney.css" type="text/css" />
+    <link rel="stylesheet" href="assets/stellenbosch.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Bayesian meta-regression models for the estimation of population trends in health risk factors
+]
+.subtitle[
+## <span style="font-style: normal;">Annibale Cois </span><span style="font-size: 50%;">MEng, MPH, PhD</span>
+]
+.author[
+### <span style="font-size: 80%; font-style:normal;">Division of Health Systems &amp; Public Health, Department of Global Health, Stellenbosch University &amp; <br/> Division of Epidemiology &amp; Biostatistics, School of Public Health, University of Cape Town</span>
+]
+.date[
+### <span style="color: #000000; position: relative; top: 180px; font-style:normal;">01/12/2022 • George • Western Cape • South Africa </span>
+]
+
+---
+
+
+class: hide_logo
+
+
+
+<div>
+<style type="text/css">.xaringan-extra-logo {
+width: 150px;
+height: 46px;
+z-index: 0;
+background-image: url(assets/sulogo_1.png);
+background-size: contain;
+background-repeat: no-repeat;
+position: absolute;
+bottom:1em;left:60px;
+}
+</style>
+<script>(function () {
+  let tries = 0
+  function addLogo () {
+    if (typeof slideshow === 'undefined') {
+      tries += 1
+      if (tries < 10) {
+        setTimeout(addLogo, 100)
+      }
+    } else {
+      document.querySelectorAll('.remark-slide-content:not(.title-slide):not(.inverse):not(.hide_logo)')
+        .forEach(function (slide) {
+          const logo = document.createElement('div')
+          logo.classList = 'xaringan-extra-logo'
+          logo.href = null
+          slide.appendChild(logo)
+        })
+    }
+  }
+  document.addEventListener('DOMContentLoaded', addLogo)
+})()</script>
+</div>
+
+## Outline &lt;svg viewBox="0 0 512 512" style="height:1em;display:inline-block;fill:#561a34;position:fixed;top:38;right:50;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M80 368H16a16 16 0 0 0-16 16v64a16 16 0 0 0 16 16h64a16 16 0 0 0 16-16v-64a16 16 0 0 0-16-16zm0-320H16A16 16 0 0 0 0 64v64a16 16 0 0 0 16 16h64a16 16 0 0 0 16-16V64a16 16 0 0 0-16-16zm0 160H16a16 16 0 0 0-16 16v64a16 16 0 0 0 16 16h64a16 16 0 0 0 16-16v-64a16 16 0 0 0-16-16zm416 176H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm0-320H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16zm0 160H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16z"&gt;&lt;/path&gt;&lt;/svg&gt;
+.black[
+- ### Quantifying trends and distribution of risk factors for health
+- ### Alcohol consumption as a case in point
+]
+--
+.black[
+- ### Why Bayes? 
+- ### A Bayesian meta-regression model for alcohol consumption
+]
+--
+.black[
+- ### Results: a (brief) summary
+- ### Conclusion
+]
+
+???
+- Quantifying trends and distribution of risk factors for health
+- Alcohol consumption as a case in point: mainstream estimation methods  
+
+- Why Bayes? A principled approach to data synthesis
+- A Bayesian meta-regression model for alcohol consumption: overview, implementation, fitting, checking
+
+- Results: a (brief) summary
+- Conclusion
+
+---
+background-image: url(images/data.png)
+background-position: 50% 60%
+background-size: 60%
+## Data  &lt;svg viewBox="0 0 512 512" style="height:1em;display:inline-block;fill:#561a34;position:fixed;top:38;right:50;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M447.1 112c-34.2.5-62.3 28.4-63 62.6-.5 24.3 12.5 45.6 32 56.8V344c0 57.3-50.2 104-112 104-60 0-109.2-44.1-111.9-99.2C265 333.8 320 269.2 320 192V36.6c0-11.4-8.1-21.3-19.3-23.5L237.8.5c-13-2.6-25.6 5.8-28.2 18.8L206.4 35c-2.6 13 5.8 25.6 18.8 28.2l30.7 6.1v121.4c0 52.9-42.2 96.7-95.1 97.2-53.4.5-96.9-42.7-96.9-96V69.4l30.7-6.1c13-2.6 21.4-15.2 18.8-28.2l-3.1-15.7C107.7 6.4 95.1-2 82.1.6L19.3 13C8.1 15.3 0 25.1 0 36.6V192c0 77.3 55.1 142 128.1 156.8C130.7 439.2 208.6 512 304 512c97 0 176-75.4 176-168V231.4c19.1-11.1 32-31.7 32-55.4 0-35.7-29.2-64.5-64.9-64zm.9 80c-8.8 0-16-7.2-16-16s7.2-16 16-16 16 7.2 16 16-7.2 16-16 16z"&gt;&lt;/path&gt;&lt;/svg&gt;
+
+---
+background-image: url(images/data1.png)
+background-position: 50% 60%
+background-size: 60%
+## Data  &lt;svg viewBox="0 0 512 512" style="height:1em;display:inline-block;fill:#561a34;position:fixed;top:38;right:50;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M447.1 112c-34.2.5-62.3 28.4-63 62.6-.5 24.3 12.5 45.6 32 56.8V344c0 57.3-50.2 104-112 104-60 0-109.2-44.1-111.9-99.2C265 333.8 320 269.2 320 192V36.6c0-11.4-8.1-21.3-19.3-23.5L237.8.5c-13-2.6-25.6 5.8-28.2 18.8L206.4 35c-2.6 13 5.8 25.6 18.8 28.2l30.7 6.1v121.4c0 52.9-42.2 96.7-95.1 97.2-53.4.5-96.9-42.7-96.9-96V69.4l30.7-6.1c13-2.6 21.4-15.2 18.8-28.2l-3.1-15.7C107.7 6.4 95.1-2 82.1.6L19.3 13C8.1 15.3 0 25.1 0 36.6V192c0 77.3 55.1 142 128.1 156.8C130.7 439.2 208.6 512 304 512c97 0 176-75.4 176-168V231.4c19.1-11.1 32-31.7 32-55.4 0-35.7-29.2-64.5-64.9-64zm.9 80c-8.8 0-16-7.2-16-16s7.2-16 16-16 16 7.2 16 16-7.2 16-16 16z"&gt;&lt;/path&gt;&lt;/svg&gt;
+&lt;br/&gt;
+&lt;br/&gt;
+.font200[
+.center[
+Heterogeneous 
+
+Sparse  
+  
+(often) biased
+]
+]
+
+???
+multiple, heterogeneous data sources
+
+---
+background-image: url(images/sample.png)
+background-position: 10% 50%
+background-size: 40%
+## Estimating alcohol consumption  &lt;svg viewBox="0 0 512 512" style="height:1em;display:inline-block;fill:#561a34;position:fixed;top:38;right:50;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M507.31 72.57L439.43 4.69c-6.25-6.25-16.38-6.25-22.63 0l-22.63 22.63c-6.25 6.25-6.25 16.38 0 22.63l-76.67 76.67c-46.58-19.7-102.4-10.73-140.37 27.23L18.75 312.23c-24.99 24.99-24.99 65.52 0 90.51l90.51 90.51c24.99 24.99 65.52 24.99 90.51 0l158.39-158.39c37.96-37.96 46.93-93.79 27.23-140.37l76.67-76.67c6.25 6.25 16.38 6.25 22.63 0l22.63-22.63c6.24-6.24 6.24-16.37-.01-22.62zM179.22 423.29l-90.51-90.51 122.04-122.04 90.51 90.51-122.04 122.04z"&gt;&lt;/path&gt;&lt;/svg&gt;
+
+.font140[
+.pull-right[
+
+&lt;div style = "margin-top:120px; margin-bottom: 60px;"&gt;Large uncertainty &lt;img src="images/ci.png", width = "200"&gt;&lt;/img&gt;&lt;/div&gt;
+&lt;div style = "margin-bottom: 50px;"&gt;Interval censored data &lt;img src="images/censor.png", width = "100"&gt;&lt;/img&gt;&lt;/div&gt;
+&lt;div&gt;Large &lt;span style = "color:red;"&gt;downward&lt;/span&gt; bias &lt;img src="images/darrow.png", width = "50"&gt;&lt;/img&gt;&lt;/div&gt;&lt;/div&gt;
+]
+]
+
+---
+class: hide_logo
+background-image: url(images/coverage.png)
+background-position: 50% 50%
+background-size: 60%
+
+.footnote[Probst, Shuper, and Rehm (2017)]
+---
+class: hide_logo
+background-image: url(images/triang.png)
+background-position: 10% 60%
+background-size: 60% 
+## The WHO approach  &lt;svg viewBox="0 0 512 512" style="height:1em;display:inline-block;fill:#561a34;position:fixed;top:38;right:50;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M507.31 72.57L439.43 4.69c-6.25-6.25-16.38-6.25-22.63 0l-22.63 22.63c-6.25 6.25-6.25 16.38 0 22.63l-76.67 76.67c-46.58-19.7-102.4-10.73-140.37 27.23L18.75 312.23c-24.99 24.99-24.99 65.52 0 90.51l90.51 90.51c24.99 24.99 65.52 24.99 90.51 0l158.39-158.39c37.96-37.96 46.93-93.79 27.23-140.37l76.67-76.67c6.25 6.25 16.38 6.25 22.63 0l22.63-22.63c6.24-6.24 6.24-16.37-.01-22.62zM179.22 423.29l-90.51-90.51 122.04-122.04 90.51 90.51-122.04 122.04z"&gt;&lt;/path&gt;&lt;/svg&gt;
+
+.footnote[
+WHO (2018), Rehm, Kehoe, Gmel, Stinson, Grant, and Gmel (2010), Kehoe, Gmel, Shield, Gmel, and Rehm (2012)
+]
+
+--
+&lt;div style = "position: absolute; left: 65%; top:15%; width:25%;"&gt;
+&lt;img src = "images/assumptions.png" style="width: 200px; margin-left: 70px"&gt;&lt;/img&gt;
+&lt;ul&gt;
+&lt;li&gt;Distribution shape&lt;/li&gt;
+&lt;li&gt;Constant coverage across subpopulations&lt;/li&gt;
+&lt;li&gt;Known prevalence of drinkers&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;/div&gt;
+
+---
+class: hide_logo
+background-image: url(images/steps.png)
+background-position: 50% 50%
+background-size: 100%
+
+---
+background-image: url(images/bayes.png)
+background-position: 50% 50%
+background-size: 100%
+## Why Bayes?  &lt;svg viewBox="0 0 512 512" style="height:1em;display:inline-block;fill:#561a34;position:fixed;top:38;right:50;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200z"&gt;&lt;/path&gt;&lt;/svg&gt;
+&lt;br/&gt;
+- ## Principled integration of multiple data sources
+- ## Formal integration of (uncertain) assumptions as priors
+- ## Improved quantification of the estimation error
+- ## Recover of the full distribution of alcohol consumption
+
+---
+class: hide_logo
+background-image: url(images/overview.png)
+background-position: 50% 65%
+background-size: 70%
+## A meta-regression model  &lt;svg viewBox="0 0 640 512" style="height:1em;display:inline-block;fill:#561a34;position:fixed;top:38;right:50;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M278.9 511.5l-61-17.7c-6.4-1.8-10-8.5-8.2-14.9L346.2 8.7c1.8-6.4 8.5-10 14.9-8.2l61 17.7c6.4 1.8 10 8.5 8.2 14.9L293.8 503.3c-1.9 6.4-8.5 10.1-14.9 8.2zm-114-112.2l43.5-46.4c4.6-4.9 4.3-12.7-.8-17.2L117 256l90.6-79.7c5.1-4.5 5.5-12.3.8-17.2l-43.5-46.4c-4.5-4.8-12.1-5.1-17-.5L3.8 247.2c-5.1 4.7-5.1 12.8 0 17.5l144.1 135.1c4.9 4.6 12.5 4.4 17-.5zm327.2.6l144.1-135.1c5.1-4.7 5.1-12.8 0-17.5L492.1 112.1c-4.8-4.5-12.4-4.3-17 .5L431.6 159c-4.6 4.9-4.3 12.7.8 17.2L523 256l-90.6 79.7c-5.1 4.5-5.5 12.3-.8 17.2l43.5 46.4c4.5 4.9 12.1 5.1 17 .6z"&gt;&lt;/path&gt;&lt;/svg&gt;
+
+--
+
+&lt;div style = "position: fixed; top: 270px; left: 220px; font-size: 160%;"&gt;
+&lt;img src = "images/uarrow.png" width="70"&gt;&lt;/img&gt;
+&lt;/div&gt;
+
+--
+
+&lt;div style = "position: fixed; top: 430px; left: 880px; font-size: 160%;"&gt;
+&lt;img src = "images/uarrow.png" width="70"&gt;&lt;/img&gt;
+&lt;/div&gt;
+
+
+---
+class: hide_logo
+## Data structure &lt;svg viewBox="0 0 448 512" style="height:1em;display:inline-block;fill:#561a34;position:fixed;top:38;right:50;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M224 352c-35.35 0-64 28.65-64 64s28.65 64 64 64 64-28.65 64-64-28.65-64-64-64zm0-192c35.35 0 64-28.65 64-64s-28.65-64-64-64-64 28.65-64 64 28.65 64 64 64zm192 48H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"&gt;&lt;/path&gt;&lt;/svg&gt;
+&lt;br/&gt;
+
+`\(s \in \{1,..S\}\)` = source survey  
+`\(g \in \{1,2\}\)`, `\(a \in \{1,..A\}\)` = sex and age category;  
+`\(k \in \{1,..K\}\)` = number of different consumption intervals;  
+
+&lt;br/&gt;
+
+.font140[
+`$$\require{color}\displaystyle\color{#FF0000}{pp_{s,g,a}, pse_{s,g,a}}$$`
+`$$\require{color}\displaystyle\color{#FF0000}{TC_{s,g,a,k} = \left\{lc_{s,g,a,k}; uc_{s,g,a,k}; pc_{s,g,a,k}; ne_{s,g,a}\right\}}$$`
+&lt;br/&gt;
+]
+
+`\(lc_{s,g,a,k}, uc_{s,g,a,k}\)`  = bounds of the consumption intervals [g/day];  
+`\(pc_{s,g,a,k}\)` = proportion of subjects belonging to the consumption interval;  
+`\(ne_{s,g,a}\)` = effective sample size;  
+
+???
+The effective sample size  is calculated by distributing the total sample across all surveys according to the ‘quality effects weighting' approach by Doi and Colleagues,\Citep{Doi2015b}  which allows for integrating in a principled way the information on the precision of the survey estimates (as conveyed by their standard error) with the information of the relative quality of the data sources (as summarised by the risk of bias score).  
+This relatively complex data structure is justified by the interval-censored nature of the survey data collected with frequency-quantity questionnaires, and avoids introducing the unmodeled error associated with using the middle point of the interval captured by the surveys to represent the actual consumption.
+
+---
+## Likelihood &lt;svg viewBox="0 0 448 512" style="height:1em;display:inline-block;fill:#561a34;position:fixed;top:38;right:50;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M224 352c-35.35 0-64 28.65-64 64s28.65 64 64 64 64-28.65 64-64-28.65-64-64-64zm0-192c35.35 0 64-28.65 64-64s-28.65-64-64-64-64 28.65-64 64 28.65 64 64 64zm192 48H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"&gt;&lt;/path&gt;&lt;/svg&gt;
+&lt;br/&gt;
+
+ .font140[
+`$$\require{color}\displaystyle
+\begin{align}
+&amp;L = \color{#FF0000}{\prod pc_{s,g,a,k}\cdot ne_{s,g,a}} \cdot L^{'}_{s,g,a,k} \prod L^{''}_{s,g,a}\nonumber\\
+\nonumber\\
+&amp;L^{'}_{s,g,a,k} = \left\{\begin{array}{l}
+    \Gamma(uc_{s,g,a,k} \vert \alpha_{y,g,a},\beta_{y,g,a}/c_{s,g,a}) \qquad if \; uc_{\cdot} = lc_{\cdot}\\\\
+    \displaystyle \int_{x=lc_{s,g,a,k}}^{uc_{s,g,a,k}} \Gamma(x \vert \alpha_{y,g,a},\beta_{y,g,a}/c_{s,g,a})dx \qquad if \; uc_{\cdot} &gt; lc_{\cdot}    
+      \end{array}\right.\nonumber\\
+\nonumber\\
+&amp;L^{''}_{s,g,a} = \mathcal{N}(pp_{s,g,a} \vert p_{y,g,a},pse_{s,g,a})\nonumber
+\end{align}$$`
+]
+
+---
+## Smooth temporal trends &lt;svg viewBox="0 0 448 512" style="height:1em;display:inline-block;fill:#561a34;position:fixed;top:38;right:50;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M224 352c-35.35 0-64 28.65-64 64s28.65 64 64 64 64-28.65 64-64-28.65-64-64-64zm0-192c35.35 0 64-28.65 64-64s-28.65-64-64-64-64 28.65-64 64 28.65 64 64 64zm192 48H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"&gt;&lt;/path&gt;&lt;/svg&gt;
+&lt;br/&gt;
+
+.red[.center[Average consumption among drinkers]]
+`$$\alpha_{y,g,a}=\left(\frac{\mu_{y,g,a}}{sd_{y,g,a}}\right)^2 \qquad;\qquad \beta_{y,g,a}=\alpha_{y,g,a}/\mu_{y,g,a}$$`
+`$$\log(\mu_{y,g,a}) = \sum_{i=1}^{dc_1} \sum_{j=1}^{dc_2} s^{'}_{g,i,j} \Psi^{'}_i(year) \Phi^{'}_j(age) \qquad \forall g \in \{1,2\}$$` 
+`$$c_{s,g,a} = c_{s}^{'} \cdot c_{g,a}^{''}$$`
+.red[.center[Proportion of drinkers]]
+
+`$$logit(p_{y,g,a}) = \sum_{i=1}^{dp_1} \sum_{j=1}^{dp_2} s^{''}_{g,i,j} \Psi^{''}_i(year) \Phi^{''}_j(age) \qquad \forall g \in \{1,2\}$$`
+&lt;br/&gt;
+
+
+---
+## (Soft) constraints/1&lt;svg viewBox="0 0 448 512" style="height:1em;display:inline-block;fill:#561a34;position:fixed;top:38;right:50;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M224 352c-35.35 0-64 28.65-64 64s28.65 64 64 64 64-28.65 64-64-28.65-64-64-64zm0-192c35.35 0 64-28.65 64-64s-28.65-64-64-64-64 28.65-64 64 28.65 64 64 64zm192 48H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"&gt;&lt;/path&gt;&lt;/svg&gt;
+&lt;br/&gt;
+&lt;br/&gt;
+&lt;br/&gt;
+.red[.center[Shape parameter &amp;thickapprox; constant]]
+`$$\alpha_{y,g,a} = \sim \mathcal{N}(r_g,rs_g) \quad \forall y \in \{1,...Y\},\forall g \in \{1,2\},\forall a \in \{1,...A\}$$`
+&lt;br/&gt;
+.red[.center[Total consumption per capita matches the APC form administrative data]]
+`$$\sum_{g=1}^{2}\sum_{a=1}^{A} \mu_{y,g,a} \cdot pop_{y,g,a} \cdot p_{y,g,a} \sim \mathcal{N}((1-w) \cdot apc_y,apcse_y) \qquad \forall y \in \{1,...Y\}$$`
+
+---
+class: hide_logo
+background-image: url(images/softbound.png)
+background-position: 25% 80%
+background-size: 30%
+## (Soft) constraints/2&lt;svg viewBox="0 0 448 512" style="height:1em;display:inline-block;fill:#561a34;position:fixed;top:38;right:50;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M224 352c-35.35 0-64 28.65-64 64s28.65 64 64 64 64-28.65 64-64-28.65-64-64-64zm0-192c35.35 0 64-28.65 64-64s-28.65-64-64-64-64 28.65-64 64 28.65 64 64 64zm192 48H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"&gt;&lt;/path&gt;&lt;/svg&gt;
+&lt;br/&gt;
+.red[.center[Average daily consumption (very) unlikely above 150 g]]
+
+.pull-left[
+ $$\begin{align}
+f(x)= \begin{cases}
+      \dfrac{0.975}{150} &amp; x&lt;150\\
+      \nonumber\\
+      0.0250e^{-0.26(x-150)} &amp; x&gt;=150\nonumber
+    \end{cases}  
+\end{align}$$&lt;/div&gt;
+]
+
+--
+
+.pull-right[
+ $$\begin{align}
+97.5^{th}\: percentile = \beta_0 + \beta_1 \mu + \beta_2 \alpha + \beta_3 \mu \alpha\nonumber 
+\end{align}$$ 
+]
+
+&lt;img src = "images/approxquant.png" style = "position:absolute; left: 60%; top: 40%; width: 30%;"&gt;&lt;/img&gt; 
+
+&lt;div style = "position:absolute; left: 70%; top: 70%; "&gt;
+ $$\begin{align}
+\begin{cases}
+      \beta_0=3.259e^{-12}\\\nonumber
+      \beta_0=6.397\\\nonumber
+      \beta_0=-1.887e^{-12}\\\nonumber
+      \beta_0=-2.884\\\nonumber
+    \end{cases}  
+\end{align}$$ 
+&lt;/div&gt;
+
+---
+class: hide_logo
+background-image: url(images/stanlogo.jpg),url(images/rlogo.png),url(images/server.png),url(images/dot.png)
+background-position: 20% 25%,40% 25%,10% 70%, 95% 55%
+background-size: 10%, 10%,10%, 32%
+## Implementation &amp; Computation &lt;svg viewBox="0 0 512 512" style="height:1em;display:inline-block;fill:#561a34;position:fixed;top:38;right:50;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"&gt;&lt;/path&gt;&lt;/svg&gt;
+&lt;div style = "position:fixed; left: 22%; top: 50%; "&gt;
+CPU: Intel® Xeon® E5-1650 v3@3.5GHz&lt;br/&gt;
+RAM: 16Gb RAM&lt;br/&gt;
+OS: Linux Ubuntu 20.0&lt;br/&gt;   
+&lt;br/&gt;
+NUTS sampler &lt;br/&gt; 
+110 000 samples (60% discarded)
+&lt;/div&gt;
+
+&lt;div style = "position:fixed; left: 70%; top: 40%; font-size: 140%;"&gt;
+For all parameters: &lt;br/&gt;
+R &lt; 1.024 &lt;br/&gt;
+ESS &gt; 539 &lt;br/&gt;
+MCSE &lt; 5% &lt;br/&gt;
+&lt;/div&gt;
+
+.footnote[StanDevelopmentTeam (2019), RCoreTeam (2019),]
+
+???
+We implemented and fit the model with Stan v. 2.19[29] and used R v. 3.6[30]
+for data manipulation, pre- and post-processing and graphing. We recovered the
+posterior distribution of the parameters with Stan’s default Non-U-Turn Sampler
+(NUTS), which is and adaptive version of the Hamiltonian Monte Carlo sampling
+algorithm.[31] We drew a total of 110 000 samples (10 000 samples from each of 11
+parallel chains), discarded the first 60% and used the remaining 44 000 to recover
+the parameters of interest and the bounds of their 95% credible intervals (CI) as
+the 50th, 2.5th and 97.5th percentile of the sampled distribution.
+
+---
+class: hide_logo
+background-image: url(images/log_post_1.png),url(images/log_post_2.png),url(images/log_post_3.png), url(images/ppcheck.png)
+background-position: 5% 25%,5% 55%,5% 85%, 85% 50%
+background-size: 40%,40%,40%,40%,30%
+## Model checking &lt;svg viewBox="0 0 512 512" style="height:1em;display:inline-block;fill:#561a34;position:fixed;top:38;right:50;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"&gt;&lt;/path&gt;&lt;/svg&gt;
+
+
+???
+We checked the convergence of the sampling algorithm by visually inspecting
+the trace plots and calculating the Gelman and Rubin potential scale reduction
+statistic ˆR,[32] and we calculated the effective sample size (ESS) and the Montecarlo
+standard error (MCSE) for all parameters as indicators of the reliability of the
+estimates.
+As a posterior predictive checking, we analysed the discrepancies between the predicted
+and observed distribution of consumption for each survey and we examined
+the congruence of the distribution of residuals with the modelling assumptions.
+
+The estimation of the model parameters took approximately 130 hours on a Linux
+workstation (CPU: Intel® Xeon® E5-1650 v3@3.5GHz; RAM: 16 GB; OS: Ubuntu
+v. 20.0). Model checking procedures supported the conclusion that the model
+reached convergence (trace plots assuming the characteristics ‘caterpillar’ shape
+and ˆR &lt; 1.024 for all parameters), with acceptable values of effective sample size
+and Montecarlo standard error (ESS &gt; 539, MCSE &lt; 5% of the posterior standard
+deviation for all parameters).
+The quantile-quantile plots of the standardised residuals did not suggest major
+deviations from the assumed normality, both overall and within each survey.
+The predicted distribution of average consumption among drinkers fit the data
+reasonably well across surveys. In most cases the observed distribution was comprised
+within the range of variability of the predictions, with some discrepancies
+observed for high levels of consumption (above 50-60 g/day) in the three iterations
+of the SABSSM survey. It must be considered that, because of the censored nature
+of the data, the ‘observed’ distribution itself is only partially known. As an
+example, Figure 2 compares the observed and predicted cumulative distribution of
+average alcohol consumption among drinkers for the SADHS 1998 and SADHS 2016
+surveys. Full results are reported in Additional File 1.
+
+---
+class: hide_logo
+background-image: url(images/time.png)
+background-position:50% 60%
+background-size: 45%
+## Results/1 &lt;svg viewBox="0 0 512 512" style="height:1em;display:inline-block;fill:#561a34;position:fixed;top:38;right:50;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M496 384H64V80c0-8.84-7.16-16-16-16H16C7.16 64 0 71.16 0 80v336c0 17.67 14.33 32 32 32h464c8.84 0 16-7.16 16-16v-32c0-8.84-7.16-16-16-16zM464 96H345.94c-21.38 0-32.09 25.85-16.97 40.97l32.4 32.4L288 242.75l-73.37-73.37c-12.5-12.5-32.76-12.5-45.25 0l-68.69 68.69c-6.25 6.25-6.25 16.38 0 22.63l22.62 22.62c6.25 6.25 16.38 6.25 22.63 0L192 237.25l73.37 73.37c12.5 12.5 32.76 12.5 45.25 0l96-96 32.4 32.4c15.12 15.12 40.97 4.41 40.97-16.97V112c.01-8.84-7.15-16-15.99-16z"&gt;&lt;/path&gt;&lt;/svg&gt;
+
+.footnote[Cois, Matzopoulos, Pillay-van Wyk, and Bradshaw (2021)]
+
+---
+class: hide_logo
+background-image: url(images/age.png)
+background-position:50% 70%
+background-size: 80%
+## Results/2 &lt;svg viewBox="0 0 512 512" style="height:1em;display:inline-block;fill:#561a34;position:fixed;top:38;right:50;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M496 384H64V80c0-8.84-7.16-16-16-16H16C7.16 64 0 71.16 0 80v336c0 17.67 14.33 32 32 32h464c8.84 0 16-7.16 16-16v-32c0-8.84-7.16-16-16-16zM464 96H345.94c-21.38 0-32.09 25.85-16.97 40.97l32.4 32.4L288 242.75l-73.37-73.37c-12.5-12.5-32.76-12.5-45.25 0l-68.69 68.69c-6.25 6.25-6.25 16.38 0 22.63l22.62 22.62c6.25 6.25 16.38 6.25 22.63 0L192 237.25l73.37 73.37c12.5 12.5 32.76 12.5 45.25 0l96-96 32.4 32.4c15.12 15.12 40.97 4.41 40.97-16.97V112c.01-8.84-7.15-16-15.99-16z"&gt;&lt;/path&gt;&lt;/svg&gt;
+
+---
+class: hide_logo
+background-image: url(images/cats.png)
+background-position:50% 60%
+background-size: 80%
+## Results/3 &lt;svg viewBox="0 0 512 512" style="height:1em;display:inline-block;fill:#561a34;position:fixed;top:38;right:50;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M496 384H64V80c0-8.84-7.16-16-16-16H16C7.16 64 0 71.16 0 80v336c0 17.67 14.33 32 32 32h464c8.84 0 16-7.16 16-16v-32c0-8.84-7.16-16-16-16zM464 96H345.94c-21.38 0-32.09 25.85-16.97 40.97l32.4 32.4L288 242.75l-73.37-73.37c-12.5-12.5-32.76-12.5-45.25 0l-68.69 68.69c-6.25 6.25-6.25 16.38 0 22.63l22.62 22.62c6.25 6.25 16.38 6.25 22.63 0L192 237.25l73.37 73.37c12.5 12.5 32.76 12.5 45.25 0l96-96 32.4 32.4c15.12 15.12 40.97 4.41 40.97-16.97V112c.01-8.84-7.15-16-15.99-16z"&gt;&lt;/path&gt;&lt;/svg&gt;
+
+---
+class: hide_logo
+background-image: url(images/coverage1.png)
+background-position:50% 60%
+background-size: 60%
+## Results/4 &lt;svg viewBox="0 0 512 512" style="height:1em;display:inline-block;fill:#561a34;position:fixed;top:38;right:50;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M496 384H64V80c0-8.84-7.16-16-16-16H16C7.16 64 0 71.16 0 80v336c0 17.67 14.33 32 32 32h464c8.84 0 16-7.16 16-16v-32c0-8.84-7.16-16-16-16zM464 96H345.94c-21.38 0-32.09 25.85-16.97 40.97l32.4 32.4L288 242.75l-73.37-73.37c-12.5-12.5-32.76-12.5-45.25 0l-68.69 68.69c-6.25 6.25-6.25 16.38 0 22.63l22.62 22.62c6.25 6.25 16.38 6.25 22.63 0L192 237.25l73.37 73.37c12.5 12.5 32.76 12.5 45.25 0l96-96 32.4 32.4c15.12 15.12 40.97 4.41 40.97-16.97V112c.01-8.84-7.15-16-15.99-16z"&gt;&lt;/path&gt;&lt;/svg&gt;
+
+---
+class: hide_logo
+## Conclusions &lt;svg viewBox="0 0 448 512" style="height:1em;display:inline-block;fill:#561a34;position:fixed;top:38;right:50;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M400 32H48C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48z"&gt;&lt;/path&gt;&lt;/svg&gt;
+.pull-left[
+
+- Plausible results
+- Credible intervals includes uncertainty due to APC estimates, distribution shape, consumtpion limits...
+- Relaxed assumptions regarding prevalence of drinkers and constant coverage
+- Full characterisation of the distribution
+- Flexibility 
+]
+
+--
+.pull-right[
+.center[
+## Future developments
+]
+
+- Including a spatial dimension into the model
+- Covariates
+- Variabel coverage across drinking categories
+- Computational efficiency
+
+&lt;div style = "position: fixed; top: 270px; left: 59%; width: 40%;"&gt;&lt;img src = "images/future.png"&gt;&lt;/img&gt;&lt;/div&gt;
+]
+
+---
+class: su-white hide_logo
+&lt;br/&gt;&lt;br/&gt;
+
+.font80[
+&lt;p style ="font-size:400%; margin-bottom: -10px; margin-left: -5px;"&gt;Thank You!&lt;/p&gt;
+&lt;div style = "margin-left:15px;"&gt;
+&lt;svg viewBox="0 0 512 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#561a34;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M464 64H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V112c0-26.51-21.49-48-48-48zm0 48v40.805c-22.422 18.259-58.168 46.651-134.587 106.49-16.841 13.247-50.201 45.072-73.413 44.701-23.208.375-56.579-31.459-73.413-44.701C106.18 199.465 70.425 171.067 48 152.805V112h416zM48 400V214.398c22.914 18.251 55.409 43.862 104.938 82.646 21.857 17.205 60.134 55.186 103.062 54.955 42.717.231 80.509-37.199 103.053-54.947 49.528-38.783 82.032-64.401 104.947-82.653V400H48z"&gt;&lt;/path&gt;&lt;/svg&gt; [acois@sun.ac.za](mailto:acois@sun.ac.za)
+
+ORCID: [0000-0002-7014-6510](https://orcid.org/0000-0002-7014-6510)
+
+&lt;p&gt;Web of Science: [ AAK-8603-2020](https://www.webofscience.com/wos/author/rid/AAK-8603-2020)
+]
+&lt;img src = "assets/sulogo_4.png" width = "270" style = "margin-top: 5px; margin-left:15px;"&gt;&lt;/img&gt; 
+&lt;/div&gt;
+&lt;br/&gt;
+
+&lt;div style = "text-align: right; position: fixed; right: 100px;"&gt;
+&lt;img src = "images/github.png" width = "85"&gt;&lt;/img&gt; &lt;br/&gt;
+.font70[
+This presentation is available from: &lt;br/&gt;
+&lt;a href = "https://annibalecois,github.io/metaregression"&gt;https://annibaleaois.github.io/metaregression&lt;/a&gt; &lt;br/&gt;
+and the generating code from: &lt;br/&gt;
+&lt;a href = "https://github.com/annibalecois/metaregression"&gt;https://github.com/annibalecois/metaregression&lt;/a&gt; &lt;br/&gt;
+]
+&lt;/div&gt;
+
+---
+class: hide_logo
+## References  
+&lt;br/&gt;
+.font80[
+Cois, A., R. Matzopoulos, V. Pillay-van Wyk, et al. (2021). "Bayesian
+modelling of population trends in alcohol consumption provides
+empirically based country estimates for South Africa". In: _Population
+Health Metrics_ 19.1, pp. 43-43. DOI:
+[10.1186/s12963-021-00270-3](https://doi.org/10.1186%2Fs12963-021-00270-3).
+URL:
+[https://doi.org/10.1186/s12963-021-00270-3](https://doi.org/10.1186/s12963-021-00270-3).
+
+Kehoe, T., G. Gmel, K. D. Shield, et al. (2012). "Determining the Best
+Population-Level Alcohol Consumption Model and Its Impact on Estimates
+of Alcohol-Attributable Harms". In: _Population health metrics_ 10.1,
+pp. 6-6.
+
+Probst, C., P. A. Shuper, and J. Rehm (2017). "Coverage of Alcohol
+Consumption by National Surveys in South Africa". In: _Addiction_
+112.4, pp. 705-710-705-710. DOI:
+[10.1111/add.13692](https://doi.org/10.1111%2Fadd.13692).
+
+RCoreTeam (2019). "R: A Language and Environment for Statistical
+Computing v 3.6". . Publisher: R Foundation for Statistical Computing.
+
+Rehm, J., T. Kehoe, G. Gmel, et al. (2010). "Statistical Modeling of
+Volume of Alcohol Exposure for Epidemiological Studies of Population
+Health: The US Example". In: _Population Health Metrics_ 8.1, pp. 3-3.
+DOI: [10.1186/1478-7954-8-3](https://doi.org/10.1186%2F1478-7954-8-3).
+
+StanDevelopmentTeam (2019). "Stan Modeling Language: User's Guide and
+Reference Manual. Version 2.19.0."
+
+URL: [http://mc-stan.org](http://mc-stan.org).
+
+WHO (2018). _Global status report on alcohol and health 2018_. World
+Health Organization. URL:
+[https://apps.who.int/iris/bitstream/handle/10665/274603/9789241565639-eng.pdf?ua=1](https://apps.who.int/iris/bitstream/handle/10665/274603/9789241565639-eng.pdf?ua=1).
+]
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="assets/remark-zoom.js"></script>
+<script src="assets/cols_macro.js"></script>
+<script src="assets/macros.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"ratio": "16:9",
+"countIncrementalSlides": true,
+"navigation": {
+"scroll": false
+}
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
