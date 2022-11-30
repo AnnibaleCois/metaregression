@@ -19,10 +19,9 @@ output:
       navigation:
         scroll: false # disable slide transitions by scrolling
 ---
-
 class: hide_logo
-
-```{r setup, echo=FALSE, message=FALSE}
+```{r setup, echo=FALSE, message=FALSE, include =FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 knitr::read_chunk('assets/init.R')
 ```
 
@@ -35,25 +34,35 @@ knitr::read_chunk('assets/init.R')
 - ### Quantifying trends and distribution of risk factors for health
 - ### Alcohol consumption as a case in point
 ]
---
+
 .black[
 - ### Why Bayes? 
 - ### A Bayesian meta-regression model for alcohol consumption
 ]
---
+
 .black[
-- ### Results: a (brief) summary
+- ### (Some) results
 - ### Conclusion
 ]
 
 ???
+Thank you chair.
+I am an epidemiologist, and my current research interest is on modelling trends and ditributions in cardiovascular risk and associated risk factors.
+You can see in the slide the otline of my presentation:
+
+I will strat with some general considerations regarding challenges in the qunatifiation of distribution of risk factors in health, which is the motivating factors that pushed me to 'experiment' with Bayesian approaches. An, in particulat, I will focus on the estimation of alcohol consumption in population, in tersm of rpevalence of drinkers and average daily consumption among drinkers: 
+
+I will then move to sumamrise the raesons I thought that Bayesiam methdos could be advanategsous comapred to mainstream methdos, and I will describe the modelling approach I have applied.
+
+I will then present some results and some final considerations.
+
 - Quantifying trends and distribution of risk factors for health
 - Alcohol consumption as a case in point: mainstream estimation methods  
 
 - Why Bayes? A principled approach to data synthesis
 - A Bayesian meta-regression model for alcohol consumption: overview, implementation, fitting, checking
 
-- Results: a (brief) summary
+- (Some) results
 - Conclusion
 
 ---
@@ -61,6 +70,9 @@ background-image: url(images/data.png)
 background-position: 50% 60%
 background-size: 60%
 ## Data  `r top_icon("stethoscope")`
+
+???
+I (and, more in general, we epidemiologists) work usually with poor data: 
 
 ---
 background-image: url(images/data1.png)
@@ -80,7 +92,7 @@ Sparse
 ]
 
 ???
-multiple, heterogeneous data sources
+from disparate sources (population surveys, surveillance facility based, from registries,.. ), heterogeneous  (e.g. incidence vs prevalences) and of various formats (aggregated for privacy reasons, vs microdata) in their format and often biased. 
 
 ---
 background-image: url(images/sample.png)
@@ -97,8 +109,12 @@ background-size: 40%
 ]
 ]
 
+???
+A good example is the estimation of alcohol consumption. Alcohol use is assciated with a host of heath outcome (mostly negative) and reliable estimates of age and sex-specific prevalence of drinkers and average daily consumption among drinkers are needed for the correct estimation ofthe burden of disease associated with its consumption, for designing and evaluating targeted prevention activities and for the rational planning of treatment services.
+However, estimation of these quantities is quite challenging...
+
 ---
-class: hide_logo
+class: hide_logo `r top_icon("wine-bottle")`
 background-image: url(images/coverage.png)
 background-position: 50% 50%
 background-size: 60%
@@ -126,11 +142,23 @@ background-size: 60%
 
 </div>
 
+???
+The mainstream approach (use, e.g. by the WHO in their periodic reports) on estimation alcohol consumption at population level is based on triangulation..
+
 ---
 class: hide_logo
 background-image: url(images/steps.png)
 background-position: 50% 50%
 background-size: 100%
+
+???
+This methdos has limitations, though....
+among others, it is based on a series of 'independent' steps...
+
+Consequences: 
+- no propagation of error
+- many sources of errors arfe left out
+- assumptions are formalised as "truths" no space for "uncertainty" (if not though sensitivity analyses... they produce bunds of uncertainty, though, not formal quantification  such as Confidence/Credible Intervals)
 
 ---
 background-image: url(images/bayes.png)
@@ -150,18 +178,12 @@ background-position: 50% 65%
 background-size: 70%
 ## A meta-regression model  `r top_icon("code")`
 
---
+???
 
-<div style = "position: fixed; top: 270px; left: 220px; font-size: 160%;">
-<img src = "images/uarrow.png" width="70"></img>
-</div>
+Microdata sources: 17 surveys, between 1998 and 2016, totals ampel size ~ 190000 individuals)
+APC: Form Mantey et al (Official national accounts + estimates of unrecorded (20%))
 
---
-
-<div style = "position: fixed; top: 430px; left: 880px; font-size: 160%;">
-<img src = "images/uarrow.png" width="70"></img>
-</div>
-
+the pre-processing falls clearly outside the Bayesian framework, and the estimates are design-based estimates form survey data collected with complex sampling schemes...
 
 ---
 class: hide_logo
@@ -186,6 +208,7 @@ $ne_{s,g,a}$ = effective sample size;
 
 ???
 The effective sample size  is calculated by distributing the total sample across all surveys according to the ‘quality effects weighting' approach by Doi and Colleagues,\Citep{Doi2015b}  which allows for integrating in a principled way the information on the precision of the survey estimates (as conveyed by their standard error) with the information of the relative quality of the data sources (as summarised by the risk of bias score).  
+
 This relatively complex data structure is justified by the interval-censored nature of the survey data collected with frequency-quantity questionnaires, and avoids introducing the unmodeled error associated with using the middle point of the interval captured by the surveys to represent the actual consumption.
 
 ---
@@ -206,6 +229,9 @@ $$\require{color}\displaystyle
 \end{align}$$
 ]
 
+???
+Likelihood: product of the likelihood of observing the age-sex-survey specific prevalence **AND** the the distribution of consumption intervals from the data.
+
 ---
 ## Smooth temporal trends `r top_icon("divide")`
 <br/>
@@ -217,8 +243,9 @@ $$c_{s,g,a} = c_{s}^{'} \cdot c_{g,a}^{''}$$
 .red[.center[Proportion of drinkers]]
 
 $$logit(p_{y,g,a}) = \sum_{i=1}^{dp_1} \sum_{j=1}^{dp_2} s^{''}_{g,i,j} \Psi^{''}_i(year) \Phi^{''}_j(age) \qquad \forall g \in \{1,2\}$$
-<br/>
-
+???
+For the properties of the Gamma distribution, we can express the shape and rate paremeter as functions of mean and standard deviation...
+A plausible hypothesis: smoothness of change over time and across age categories
 
 ---
 ## (Soft) constraints/1`r top_icon("divide")`
@@ -230,6 +257,9 @@ $$\alpha_{y,g,a} = \sim \mathcal{N}(r_g,rs_g) \quad \forall y \in \{1,...Y\},\fo
 <br/>
 .red[.center[Total consumption per capita matches the APC form administrative data]]
 $$\sum_{g=1}^{2}\sum_{a=1}^{A} \mu_{y,g,a} \cdot pop_{y,g,a} \cdot p_{y,g,a} \sim \mathcal{N}((1-w) \cdot apc_y,apcse_y) \qquad \forall y \in \{1,...Y\}$$
+
+???
+epidemiologcial evidence regarding the relationships between mu and sigma (alpha = approx constant across population and sub-populations)
 
 ---
 class: hide_logo
@@ -250,8 +280,6 @@ f(x)= \begin{cases}
 \end{align}$$</div>
 ]
 
---
-
 .pull-right[
  $$\begin{align}
 97.5^{th}\: percentile = \beta_0 + \beta_1 \mu + \beta_2 \alpha + \beta_3 \mu \alpha\nonumber 
@@ -271,6 +299,14 @@ f(x)= \begin{cases}
 \end{align}$$ 
 </div>
 
+???
+advantage because we don't have to 'cut' the Gamma distribution, which becomes improper and needs rescaling...
+
+As no closed form exists that expresses the quantiles of the Gamma distribution as a function of mean and shape, imposing directly the constraints would have required to solve numerically a non-linear equation at each iteration of the sampling process.
+Given the  limited range of mu and alpha encountered in practice, we approximate thsi relationship with a linear function... with good results
+
+
+Weakly informative priors (in the sense of Andrew Gelman) for the other parameters 
 ---
 class: hide_logo
 background-image: url(images/stanlogo.jpg),url(images/rlogo.png),url(images/server.png),url(images/dot.png)
@@ -315,13 +351,15 @@ background-size: 40%,40%,40%,40%,30%
 
 ???
 We checked the convergence of the sampling algorithm by visually inspecting
-the trace plots and calculating the Gelman and Rubin potential scale reduction
-statistic ˆR,[32] and we calculated the effective sample size (ESS) and the Montecarlo
+the trace plots and calculating the **Gelman and Rubin potential scale reduction
+statistic** (R hat), and we calculated the effective sample size (ESS) and the Montecarlo
 standard error (MCSE) for all parameters as indicators of the reliability of the
 estimates.
 As a posterior predictive checking, we analysed the discrepancies between the predicted
-and observed distribution of consumption for each survey and we examined
-the congruence of the distribution of residuals with the modelling assumptions.
+and observed distribution of consumption for each survey (non-parametric Turnbull estimator for interval-censored data)
+
+and we examined
+the congruence of the distribution of residuals with the modelling assumptions (not shown).
 
 The estimation of the model parameters took approximately 130 hours on a Linux
 workstation (CPU: Intel® Xeon® E5-1650 v3@3.5GHz; RAM: 16 GB; OS: Ubuntu
@@ -392,36 +430,39 @@ class: hide_logo
 
 - Including a spatial dimension into the model
 - Covariates
-- Variabel coverage across drinking categories
+- Variable coverage across drinking categories
 - Computational efficiency
 
 <div style = "position: fixed; top: 270px; left: 59%; width: 40%;"><img src = "images/future.png"></img></div>
 ]
 
 ---
-class: su-white hide_logo
-<br/><br/>
-
+class: hide_logo
+.pull-left[
+# Credits
 .font80[
-<p style ="font-size:400%; margin-bottom: -10px; margin-left: -5px;">Thank You!</p>
-<div style = "margin-left:15px;">
-`r icons::icon_style(icons::fontawesome("envelope"),fill = "#561a34")` [acois@sun.ac.za](mailto:acois@sun.ac.za)
-
-ORCID: [0000-0002-7014-6510](https://orcid.org/0000-0002-7014-6510)
-
-<p>Web of Science: [ AAK-8603-2020](https://www.webofscience.com/wos/author/rid/AAK-8603-2020)
+Richard Matzopoulos  
+Debbie Bradshaw  
+Colleagues of BODRU at SAMRC  
+Rosana Pacella  
+Charlotte Probst  
+Charles Parry  
+Nicole Vellio  
+Katherine Sorsdahl  
+Jurgen Rehm    
 ]
-<img src = "assets/sulogo_4.png" width = "270" style = "margin-top: 5px; margin-left:15px;"></img> 
-</div>
-<br/>
 
-<div style = "text-align: right; position: fixed; right: 100px;">
+# Funding
+.font80[
+This study has been partailly funded by the South African Medical Research Council (SAMRC) Flagship Awards Project SAMRC-RFAIFSP-01-2013/SA CRA 2.
+]
+]
+
+<div style = "text-align: right; position: fixed; right: 100px; top: 70%;">
 <img src = "images/github.png" width = "85"></img> <br/>
 .font70[
 This presentation is available from: <br/>
-<a href = "https://annibalecois,github.io/metaregression">https://annibaleaois.github.io/metaregression</a> <br/>
-and the generating code from: <br/>
-<a href = "https://github.com/annibalecois/metaregression">https://github.com/annibalecois/metaregression</a> <br/>
+<a href = "https://annibalecois,github.io/metaregression">https://annibaleaois.github.io/metaregression</a>
 ]
 </div>
 
