@@ -45,34 +45,12 @@ knitr::read_chunk('assets/init.R')
 - ### Conclusion
 ]
 
-???
-Thank you chair.
-I am an epidemiologist, and my current research interest is on modelling trends and ditributions in cardiovascular risk and associated risk factors.
-You can see in the slide the otline of my presentation:
-
-I will strat with some general considerations regarding challenges in the qunatifiation of distribution of risk factors in health, which is the motivating factors that pushed me to 'experiment' with Bayesian approaches. An, in particulat, I will focus on the estimation of alcohol consumption in population, in tersm of rpevalence of drinkers and average daily consumption among drinkers: 
-
-I will then move to sumamrise the raesons I thought that Bayesiam methdos could be advanategsous comapred to mainstream methdos, and I will describe the modelling approach I have applied.
-
-I will then present some results and some final considerations.
-
-- Quantifying trends and distribution of risk factors for health
-- Alcohol consumption as a case in point: mainstream estimation methods  
-
-- Why Bayes? A principled approach to data synthesis
-- A Bayesian meta-regression model for alcohol consumption: overview, implementation, fitting, checking
-
-- (Some) results
-- Conclusion
 
 ---
 background-image: url(images/data.png)
 background-position: 50% 60%
 background-size: 60%
 ## Data  `r top_icon("stethoscope")`
-
-???
-I (and, more in general, we epidemiologists) work usually with poor data: 
 
 ---
 background-image: url(images/data1.png)
@@ -91,8 +69,6 @@ Sparse
 ]
 ]
 
-???
-from disparate sources (population surveys, surveillance facility based, from registries,.. ), heterogeneous  (e.g. incidence vs prevalences) and of various formats (aggregated for privacy reasons, vs microdata) in their format and often biased. 
 
 ---
 background-image: url(images/sample.png)
@@ -109,15 +85,13 @@ background-size: 40%
 ]
 ]
 
-???
-A good example is the estimation of alcohol consumption. Alcohol use is assciated with a host of heath outcome (mostly negative) and reliable estimates of age and sex-specific prevalence of drinkers and average daily consumption among drinkers are needed for the correct estimation ofthe burden of disease associated with its consumption, for designing and evaluating targeted prevention activities and for the rational planning of treatment services.
-However, estimation of these quantities is quite challenging...
-
 ---
-class: hide_logo `r top_icon("wine-bottle")`
+class: hide_logo 
 background-image: url(images/coverage.png)
 background-position: 50% 50%
 background-size: 60%
+## `r top_icon("wine-bottle")`
+
 
 .footnote[`r Citet(bib, "Probst2017a")`]
 ---
@@ -142,23 +116,11 @@ background-size: 60%
 
 </div>
 
-???
-The mainstream approach (use, e.g. by the WHO in their periodic reports) on estimation alcohol consumption at population level is based on triangulation..
-
 ---
 class: hide_logo
 background-image: url(images/steps.png)
 background-position: 50% 50%
 background-size: 100%
-
-???
-This methdos has limitations, though....
-among others, it is based on a series of 'independent' steps...
-
-Consequences: 
-- no propagation of error
-- many sources of errors arfe left out
-- assumptions are formalised as "truths" no space for "uncertainty" (if not though sensitivity analyses... they produce bunds of uncertainty, though, not formal quantification  such as Confidence/Credible Intervals)
 
 ---
 background-image: url(images/bayes.png)
@@ -177,13 +139,6 @@ background-image: url(images/overview.png)
 background-position: 50% 65%
 background-size: 70%
 ## A meta-regression model  `r top_icon("code")`
-
-???
-
-Microdata sources: 17 surveys, between 1998 and 2016, totals ampel size ~ 190000 individuals)
-APC: Form Mantey et al (Official national accounts + estimates of unrecorded (20%))
-
-the pre-processing falls clearly outside the Bayesian framework, and the estimates are design-based estimates form survey data collected with complex sampling schemes...
 
 ---
 class: hide_logo
@@ -206,11 +161,6 @@ $lc_{s,g,a,k}, uc_{s,g,a,k}$  = bounds of the consumption intervals [g/day];
 $pc_{s,g,a,k}$ = proportion of subjects belonging to the consumption interval;  
 $ne_{s,g,a}$ = effective sample size;  
 
-???
-The effective sample size  is calculated by distributing the total sample across all surveys according to the ‘quality effects weighting' approach by Doi and Colleagues,\Citep{Doi2015b}  which allows for integrating in a principled way the information on the precision of the survey estimates (as conveyed by their standard error) with the information of the relative quality of the data sources (as summarised by the risk of bias score).  
-
-This relatively complex data structure is justified by the interval-censored nature of the survey data collected with frequency-quantity questionnaires, and avoids introducing the unmodeled error associated with using the middle point of the interval captured by the surveys to represent the actual consumption.
-
 ---
 ## Likelihood `r top_icon("divide")`
 <br/>
@@ -229,9 +179,6 @@ $$\require{color}\displaystyle
 \end{align}$$
 ]
 
-???
-Likelihood: product of the likelihood of observing the age-sex-survey specific prevalence **AND** the the distribution of consumption intervals from the data.
-
 ---
 ## Smooth temporal trends `r top_icon("divide")`
 <br/>
@@ -243,9 +190,6 @@ $$c_{s,g,a} = c_{s}^{'} \cdot c_{g,a}^{''}$$
 .red[.center[Proportion of drinkers]]
 
 $$logit(p_{y,g,a}) = \sum_{i=1}^{dp_1} \sum_{j=1}^{dp_2} s^{''}_{g,i,j} \Psi^{''}_i(year) \Phi^{''}_j(age) \qquad \forall g \in \{1,2\}$$
-???
-For the properties of the Gamma distribution, we can express the shape and rate paremeter as functions of mean and standard deviation...
-A plausible hypothesis: smoothness of change over time and across age categories
 
 ---
 ## (Soft) constraints/1`r top_icon("divide")`
@@ -257,9 +201,6 @@ $$\alpha_{y,g,a} = \sim \mathcal{N}(r_g,rs_g) \quad \forall y \in \{1,...Y\},\fo
 <br/>
 .red[.center[Total consumption per capita matches the APC form administrative data]]
 $$\sum_{g=1}^{2}\sum_{a=1}^{A} \mu_{y,g,a} \cdot pop_{y,g,a} \cdot p_{y,g,a} \sim \mathcal{N}((1-w) \cdot apc_y,apcse_y) \qquad \forall y \in \{1,...Y\}$$
-
-???
-epidemiologcial evidence regarding the relationships between mu and sigma (alpha = approx constant across population and sub-populations)
 
 ---
 class: hide_logo
@@ -299,14 +240,6 @@ f(x)= \begin{cases}
 \end{align}$$ 
 </div>
 
-???
-advantage because we don't have to 'cut' the Gamma distribution, which becomes improper and needs rescaling...
-
-As no closed form exists that expresses the quantiles of the Gamma distribution as a function of mean and shape, imposing directly the constraints would have required to solve numerically a non-linear equation at each iteration of the sampling process.
-Given the  limited range of mu and alpha encountered in practice, we approximate thsi relationship with a linear function... with good results
-
-
-Weakly informative priors (in the sense of Andrew Gelman) for the other parameters 
 ---
 class: hide_logo
 background-image: url(images/stanlogo.jpg),url(images/rlogo.png),url(images/server.png),url(images/dot.png)
@@ -331,54 +264,12 @@ MCSE < 5% <br/>
 
 .footnote[`r Citet(bib, "stan2019")`, `r Citet(bib, "r2019")`,]
 
-???
-We implemented and fit the model with Stan v. 2.19[29] and used R v. 3.6[30]
-for data manipulation, pre- and post-processing and graphing. We recovered the
-posterior distribution of the parameters with Stan’s default Non-U-Turn Sampler
-(NUTS), which is and adaptive version of the Hamiltonian Monte Carlo sampling
-algorithm.[31] We drew a total of 110 000 samples (10 000 samples from each of 11
-parallel chains), discarded the first 60% and used the remaining 44 000 to recover
-the parameters of interest and the bounds of their 95% credible intervals (CI) as
-the 50th, 2.5th and 97.5th percentile of the sampled distribution.
-
 ---
 class: hide_logo
 background-image: url(images/log_post_1.png),url(images/log_post_2.png),url(images/log_post_3.png), url(images/ppcheck.png)
 background-position: 5% 25%,5% 55%,5% 85%, 85% 50%
 background-size: 40%,40%,40%,40%,30%
 ## Model checking `r top_icon("check")`
-
-
-???
-We checked the convergence of the sampling algorithm by visually inspecting
-the trace plots and calculating the **Gelman and Rubin potential scale reduction
-statistic** (R hat), and we calculated the effective sample size (ESS) and the Montecarlo
-standard error (MCSE) for all parameters as indicators of the reliability of the
-estimates.
-As a posterior predictive checking, we analysed the discrepancies between the predicted
-and observed distribution of consumption for each survey (non-parametric Turnbull estimator for interval-censored data)
-
-and we examined
-the congruence of the distribution of residuals with the modelling assumptions (not shown).
-
-The estimation of the model parameters took approximately 130 hours on a Linux
-workstation (CPU: Intel® Xeon® E5-1650 v3@3.5GHz; RAM: 16 GB; OS: Ubuntu
-v. 20.0). Model checking procedures supported the conclusion that the model
-reached convergence (trace plots assuming the characteristics ‘caterpillar’ shape
-and ˆR < 1.024 for all parameters), with acceptable values of effective sample size
-and Montecarlo standard error (ESS > 539, MCSE < 5% of the posterior standard
-deviation for all parameters).
-The quantile-quantile plots of the standardised residuals did not suggest major
-deviations from the assumed normality, both overall and within each survey.
-The predicted distribution of average consumption among drinkers fit the data
-reasonably well across surveys. In most cases the observed distribution was comprised
-within the range of variability of the predictions, with some discrepancies
-observed for high levels of consumption (above 50-60 g/day) in the three iterations
-of the SABSSM survey. It must be considered that, because of the censored nature
-of the data, the ‘observed’ distribution itself is only partially known. As an
-example, Figure 2 compares the observed and predicted cumulative distribution of
-average alcohol consumption among drinkers for the SADHS 1998 and SADHS 2016
-surveys. Full results are reported in Additional File 1.
 
 ---
 class: hide_logo
